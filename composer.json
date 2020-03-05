@@ -1,0 +1,17 @@
+{
+    "name": "bert-w/runescape-hiscores-api",
+    "description": "Retrieve Hiscore results easily from the OSRS RuneScape Hiscores page.",
+    "keywords": ["runescape", "hiscores", "rs07", "osrs"],
+    "license": "MIT",
+    "require": {
+        "php": "^7.2.5",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/dom-crawler": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BertW\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

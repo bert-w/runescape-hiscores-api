@@ -1,0 +1,64 @@
+<?php
+
+namespace BertW\RunescapeHiscoresApi;
+
+class HiscoreRow
+{
+    const SKILL = 'skill';
+    const MINIGAME = 'minigame';
+
+    /**
+     * URL to the skill icon that is prepended to each skill in the hiscores table.
+     * @var string|null
+     */
+    public $icon;
+
+    /**
+     * Name of the skill or name of the minigame (including "Overall" for total).
+     * @var string
+     */
+    public $name;
+
+    /**
+     * The global rank of this users' skill.
+     * @var int
+     */
+    public $rank;
+
+    /**
+     * Skills only.
+     * @var int
+     */
+    public $level;
+
+    /**
+     * Skills only.
+     * @var int|null
+     */
+    public $experience;
+
+    /**
+     * Minigames only.
+     * @var int|null
+     */
+    public $score;
+
+    /**
+     * One of the constants in this class.
+     * @var string
+     */
+    public $type;
+
+
+    public function __construct(array $properties = [])
+    {
+        foreach($properties as $property => $value) {
+            $this->$property = $value;
+        }
+    }
+
+    public function __toString()
+    {
+        return json_encode($this);
+    }
+}
