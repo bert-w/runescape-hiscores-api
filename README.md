@@ -6,6 +6,7 @@
 A PHP implementation to request player data in a nice format from the OSRS RuneScape hiscores web page.
 
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_fishing1.gif)
+![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_hitpoints1.gif)
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_defence1.gif)
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_slayer1.gif)
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_woodcutting1.gif)
