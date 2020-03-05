@@ -61,4 +61,17 @@ class HiscoreRow
     {
         return json_encode($this);
     }
+
+    public function toArray()
+    {
+        return [
+            'icon' => $this->icon,
+            'name' => $this->name,
+            'rank' => $this->rank,
+            'level' => $this->level,
+            'experience' => $this->experience,
+            'score' => $this->score,
+            'type' => $this->type,
+        ];
+    }
 }

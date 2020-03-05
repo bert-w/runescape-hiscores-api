@@ -83,4 +83,14 @@ class Player
     {
         return json_encode($this->hiscores);
     }
+
+    public function toArray()
+    {
+        return [
+            'hiscores' => array_map(function(HiscoreRow $hiscore) {
+                return $hiscore->toArray();
+            }, $this->hiscores),
+            'noTotalLevel' => $this->noTotalLevel
+        ];
+    }
 }
