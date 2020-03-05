@@ -77,7 +77,7 @@ class Hiscores
             'icon' => $row[0],
             'name' => $row[1],
             'rank' => (int)str_replace(',', '', $row[2]),
-            'level' => (int)$row[3],
+            'level' => (int)str_replace(',', '', $row[3]),
             'experience' => (int)str_replace(',', '', $row[4]),
             'type' => HiscoreRow::SKILL
         ]);
@@ -89,7 +89,7 @@ class Hiscores
             'icon' => $row[0],
             'name' => $row[1],
             'rank' => (int)str_replace(',', '', $row[2]),
-            'score' => (int)$row[3],
+            'score' => (int)str_replace(',', '', $row[3]),
             'type' => HiscoreRow::MINIGAME
         ]);
     }
