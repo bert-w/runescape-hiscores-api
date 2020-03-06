@@ -106,7 +106,7 @@ class Player
         $attack = $this->get('attack')->level ?: 1;
         $strength = $this->get('strength')->level ?: 1;
         $defence = $this->get('defence')->level ?: 1;
-        $hitpoints = $this->get('hitpoints')->level ?: 1;
+        $hitpoints = $this->get('hitpoints')->level ?: 10;
         $ranged = $this->get('ranged')->level ?: 1;
         $prayer = $this->get('prayer')->level ?: 1;
         $magic = $this->get('magic')->level ?: 1;
