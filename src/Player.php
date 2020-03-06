@@ -12,7 +12,17 @@ class Player
      * If this value is true (no total level), the `totalLevel()` function calculates a minimum from the skills.
      * @var bool
      */
-    protected $noTotalLevel;
+    public $noTotalLevel;
+
+    /**
+     * When this property is true, the combat level couldn't be completely calculated, because
+     * one or more of the combat skills were not in the hiscores. For those values, `1` is used,
+     * resulting in a possibly lower combat level than is the case.
+     * @var bool
+     */
+    public $incompleteCombatLevel;
+
+    CONST COMBAT_SKILLS = ['attack', 'strength', 'defence', 'hitpoints', 'ranged', 'prayer', 'magic'];
 
     /**
      * @param HiscoreRow[] $hiscores
@@ -23,6 +33,13 @@ class Player
 
         if(is_null($this->get('overall')->level)) {
             $this->noTotalLevel = true;
+        }
+
+        foreach(static::COMBAT_SKILLS as $skill) {
+            if(is_null($this->get($skill)->level)) {
+                $this->incompleteCombatLevel = true;
+                break;
+            }
         }
     }
 
@@ -64,7 +81,7 @@ class Player
     }
 
     /**
-     * Retrieve this users' total level, or the sum of the users' hiscores if there isn't any.
+     * Retrieve this player's total level, or the sum of the users' hiscores if there isn't any.
      * @return int
      */
     public function totalLevel()
@@ -77,6 +94,27 @@ class Player
             return $sum;
         }
         return $this->get('overall')->level;
+    }
+
+    /**
+     * Calculate the player's combat level.
+     * @return float
+     */
+    public function combatLevel()
+    {
+        // Retrieve all combat skills, using `1` where they are undefined.
+        $attack = $this->get('attack')->level ?: 1;
+        $strength = $this->get('strength')->level ?: 1;
+        $defence = $this->get('defence')->level ?: 1;
+        $hitpoints = $this->get('hitpoints')->level ?: 1;
+        $ranged = $this->get('ranged')->level ?: 1;
+        $prayer = $this->get('prayer')->level ?: 1;
+        $magic = $this->get('magic')->level ?: 1;
+
+        $calculation = 13 / 10 * max($attack + $strength, 2 * $magic, 2 * $ranged)
+            + $defence + $hitpoints + floor(0.5 * $prayer);
+
+        return $calculation / 4;
     }
 
     public function __toString()
