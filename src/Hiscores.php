@@ -98,9 +98,9 @@ class Hiscores
     {
         $crawler = new Crawler((string)$response->getBody());
         $element = $crawler->filterXPath('//*[@id="contentHiscores"]/table');
-        return $element->filter('tr')->each(function(Crawler $tr, $i) {
-            return $tr->filter('td')->each(function(Crawler $td, $i) {
-                $img = $td->children('img');
+        return $element->filterXPath('//tr')->each(function(Crawler $tr, $i) {
+            return $tr->filterXPath('//td')->each(function(Crawler $td, $i) {
+                $img = $td->filterXPath('//img');
                 if($img->count()) {
                     return $img->attr('src');
                 }
