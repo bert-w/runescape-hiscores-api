@@ -13,9 +13,15 @@ class Hiscores
     /** @var Client */
     protected $client;
 
-    public function __construct()
+    /**
+     * @param mixed ...$arguments Pass arguments straight to the Guzzle Client, allowing you to set a
+     * timeout or other settings.
+     * @see http://docs.guzzlephp.org/en/stable/request-options.html
+     */
+    public function __construct(...$arguments)
     {
-        $this->client = new Client();
+        $this->client = new Client(...$arguments);
+
     }
 
     /**
