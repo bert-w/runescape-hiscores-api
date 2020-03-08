@@ -2,6 +2,7 @@
 
 namespace BertW\RunescapeHiscoresApi;
 
+use BertW\RunescapeHiscoresApi\Exception\HiscoresException;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -26,8 +27,9 @@ class Hiscores
 
     /**
      * Get Hiscore data for a particular player.
-     * @param $player
+     * @param string $player
      * @return Player
+     * @throws HiscoresException
      */
     public function player($player)
     {
@@ -58,6 +60,7 @@ class Hiscores
      * Retrieve the complete Hiscore HTML table data (parsed to array) if you want to parse it yourself.
      * @param string
      * @return array
+     * @throws HiscoresException
      */
     public function getHiscoreTable($player)
     {
@@ -77,6 +80,10 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param array $row
+     * @return HiscoreRow
+     */
     protected function makeSkill($row)
     {
         return new HiscoreRow([
@@ -89,6 +96,10 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param array $row
+     * @return HiscoreRow
+     */
     protected function makeMinigame($row)
     {
         return new HiscoreRow([
@@ -100,10 +111,18 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param ResponseInterface $response
+     * @return array
+     * @throws HiscoresException
+     */
     protected function getParsedTableFromResponse(ResponseInterface $response)
     {
         $crawler = new Crawler((string)$response->getBody());
         $element = $crawler->filterXPath('//*[@id="contentHiscores"]/table');
+        if(!$element->count()) {
+            throw new HiscoresException('Unexpected response received. Could not find the hiscores table.');
+        }
         return $element->filterXPath('//tr')->each(function(Crawler $tr, $i) {
             return $tr->filterXPath('//td')->each(function(Crawler $td, $i) {
                 $img = $td->filterXPath('//img');
