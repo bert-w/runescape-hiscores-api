@@ -27,8 +27,9 @@ class Hiscores
 
     /**
      * Get Hiscore data for a particular player.
-     * @param $player
+     * @param string $player
      * @return Player
+     * @throws HiscoresException
      */
     public function player($player)
     {
@@ -59,6 +60,7 @@ class Hiscores
      * Retrieve the complete Hiscore HTML table data (parsed to array) if you want to parse it yourself.
      * @param string
      * @return array
+     * @throws HiscoresException
      */
     public function getHiscoreTable($player)
     {
@@ -78,6 +80,10 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param array $row
+     * @return HiscoreRow
+     */
     protected function makeSkill($row)
     {
         return new HiscoreRow([
@@ -90,6 +96,10 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param array $row
+     * @return HiscoreRow
+     */
     protected function makeMinigame($row)
     {
         return new HiscoreRow([
@@ -101,6 +111,11 @@ class Hiscores
         ]);
     }
 
+    /**
+     * @param ResponseInterface $response
+     * @return array
+     * @throws HiscoresException
+     */
     protected function getParsedTableFromResponse(ResponseInterface $response)
     {
         $crawler = new Crawler((string)$response->getBody());
