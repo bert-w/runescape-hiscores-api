@@ -3,6 +3,7 @@
 namespace BertW\RunescapeHiscoresApi;
 
 use BertW\RunescapeHiscoresApi\Exception\HiscoresException;
+use BertW\RunescapeHiscoresApi\Exception\PlayerNotFoundException;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -13,6 +14,9 @@ class Hiscores
 
     /** @var Client */
     protected $client;
+
+    /** @var string */
+    protected $player;
 
     /**
      * @param mixed ...$arguments Pass arguments straight to the Guzzle Client, allowing you to set a
@@ -33,6 +37,8 @@ class Hiscores
      */
     public function player($player)
     {
+        $this->player = $player;
+
         // Retrieve and parse Hiscores HTML table for this user.
         $data = $this->getHiscoreTable($player);
 
@@ -120,9 +126,15 @@ class Hiscores
     {
         $crawler = new Crawler((string)$response->getBody());
         $element = $crawler->filterXPath('//*[@id="contentHiscores"]/table');
+
+        if($crawler->filterXPath('//*[@id="contentHiscores"]/div[contains(., \'No player\')]')->count()) {
+            throw new PlayerNotFoundException('No player "' . $this->player . '" found.');
+        }
+
         if(!$element->count()) {
             throw new HiscoresException('Unexpected response received. Could not find the hiscores table.');
         }
+
         return $element->filterXPath('//tr')->each(function(Crawler $tr, $i) {
             return $tr->filterXPath('//td')->each(function(Crawler $td, $i) {
                 $img = $td->filterXPath('//img');
