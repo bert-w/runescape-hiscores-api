@@ -1,4 +1,5 @@
 # bert-w/runescape-hiscores-api
+![PHP Pipeline](https://github.com/bert-w/runescape-hiscores-api/actions/workflows/php.yml/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/bert-w/runescape-hiscores-api/v/stable)](https://packagist.org/packages/bert-w/runescape-hiscores-api)
 [![Total Downloads](https://poser.pugx.org/bert-w/runescape-hiscores-api/downloads)](https://packagist.org/packages/bert-w/runescape-hiscores-api)
 [![License](https://poser.pugx.org/bert-w/runescape-hiscores-api/license)](https://packagist.org/packages/bert-w/runescape-hiscores-api)
