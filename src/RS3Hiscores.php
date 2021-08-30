@@ -14,7 +14,7 @@ class RS3Hiscores extends Hiscores
     protected $playerType = RS3Player::class;
 
     /**
-     * In the RS3 Hiscores, every row in the table is associated with a skill, which has an associated ID.
+     * In the hiscores html, every row in the table is associated with a skill, which has an associated ID.
      * @var string[]
      */
     protected $skillMap = [

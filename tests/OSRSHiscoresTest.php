@@ -3,6 +3,7 @@
 namespace BertW\RunescapeHiscoresApi\Tests;
 
 use BertW\RunescapeHiscoresApi\OSRSHiscores;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class OSRSHiscoresTest extends TestCase
@@ -11,21 +12,31 @@ class OSRSHiscoresTest extends TestCase
     {
         $username = 'Lynx Titan';
 
-        $hiscores = new OSRSHiscores([
-            'headers' => [
-                // Use Chrome user-agent so the Hiscores page doesn't return an error.
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
-            ],
-        ]);
+        $hiscores = \Mockery::mock(OSRSHiscores::class);
+
+        $hiscores->shouldAllowMockingProtectedMethods()
+            ->makePartial()
+            ->shouldReceive('request')
+            ->andReturn(new Response(200, [], file_get_contents(__DIR__ . '/mocks/hiscores_osrs_lynx_titan.html')));
 
         $player = $hiscores->player($username);
 
         $this->assertEquals($username, $player->username());
 
-        $this->assertEquals(99, $player->get('attack')->level);
+        $total = 0;
 
-        $this->assertEquals(99, $player->get('defence')->level);
+        foreach($hiscores->skillMap() as $i => $skill) {
+            if ($skill === 'Overall') {
+                // Overall is a cumulative and not a skill.
+                continue;
+            }
+            $level = $player->get($skill)->level;
 
-        $this->assertEquals(99, $player->get('strength')->level);
+            $this->assertEquals(99, $level, 'Invalid for ' . $skill);
+
+            $total += $level;
+        }
+
+        $this->assertEquals($total, $player->totalLevel());
     }
 }

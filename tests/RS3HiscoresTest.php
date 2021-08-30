@@ -2,7 +2,9 @@
 
 namespace BertW\RunescapeHiscoresApi\Tests;
 
+use BertW\RunescapeHiscoresApi\OSRSHiscores;
 use BertW\RunescapeHiscoresApi\RS3Hiscores;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class RS3HiscoresTest extends TestCase
@@ -11,25 +13,33 @@ class RS3HiscoresTest extends TestCase
     {
         $username = 'le me';
 
-        $hiscores = new RS3Hiscores([
-            'headers' => [
-                // Use Chrome user-agent so the Hiscores page doesn't return an error.
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
-            ],
-        ]);
+        $hiscores = \Mockery::mock(RS3Hiscores::class);
+
+        $hiscores->shouldAllowMockingProtectedMethods()
+            ->makePartial()
+            ->shouldReceive('request')
+            ->andReturn(new Response(200, [], file_get_contents(__DIR__ . '/mocks/hiscores_rs3_le_me.html')));
 
         $player = $hiscores->player($username);
 
         $this->assertEquals($username, $player->username());
 
-        $this->assertIsNumeric($player->get('attack')->level);
+        $total = 0;
 
-        $this->assertIsNumeric($player->get('defence')->level);
+        $skill120 = ['Herblore', 'Slayer', 'Farming', 'Dungeoneering', 'Invention', 'Archaeology'];
 
-        $this->assertIsNumeric($player->get('strength')->level);
+        foreach($hiscores->skillMap() as $i => $skill) {
+            if ($skill === 'Overall') {
+                // Overall is a cumulative and not a skill.
+                continue;
+            }
+            $level = $player->get($skill)->level;
 
-        $this->assertIsNumeric($player->combatLevel());
+            $this->assertEquals(in_array($skill, $skill120) ? 120 : 99, $level, 'Invalid for ' . $skill);
 
-        $this->assertIsNumeric($player->totalLevel());
+            $total += $level;
+        }
+
+        $this->assertEquals($total, $player->totalLevel());
     }
 }

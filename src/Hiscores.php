@@ -16,6 +16,9 @@ abstract class Hiscores
     /** @var string */
     protected $playerType;
 
+    /** @var array */
+    protected $skillMap;
+
     /**
      * @param mixed ...$arguments Pass arguments straight to the Guzzle Client, allowing you to set a
      * timeout or other settings.
@@ -50,6 +53,14 @@ abstract class Hiscores
     public function getTableData($player)
     {
         return $this->getParsedTableFromResponse($this->request($player));
+    }
+
+    /**
+     * @return array
+     */
+    public function skillMap()
+    {
+        return $this->skillMap;
     }
 
     /**

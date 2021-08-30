@@ -15,6 +15,37 @@ class OSRSHiscores extends Hiscores
     protected $playerType = OSRSPlayer::class;
 
     /**
+     * In the hiscores html, every row in the table is associated with a skill, which has an associated ID.
+     * @var string[]
+     */
+    protected $skillMap = [
+        0 => 'Overall',
+        1 => 'Attack',
+        2 => 'Defence',
+        3 => 'Strength',
+        4 => 'Hitpoints',
+        5 => 'Ranged',
+        6 => 'Prayer',
+        7 => 'Magic',
+        8 => 'Cooking',
+        9 => 'Woodcutting',
+        10 => 'Fletching',
+        11 => 'Fishing',
+        12 => 'Firemaking',
+        13 => 'Crafting',
+        14 => 'Smithing',
+        15 => 'Mining',
+        16 => 'Herblore',
+        17 => 'Agility',
+        18 => 'Thieving',
+        19 => 'Slayer',
+        20 => 'Farming',
+        21 => 'Runecraft',
+        22 => 'Hunter',
+        23 => 'Construction',
+    ];
+
+    /**
      * Parse table data into skills and minigames.
      * @param array $data
      * @return array
@@ -80,10 +111,13 @@ class OSRSHiscores extends Hiscores
     protected function getParsedTableFromResponse(ResponseInterface $response)
     {
         $crawler = new Crawler((string)$response->getBody());
+
         $element = $crawler->filterXPath('//*[@id="contentHiscores"]//table');
 
-        if ($crawler->filterXPath('//*[@id="contentHiscores"]/div[contains(., \'No player\')]')->count()) {
-            throw new PlayerNotFoundException('No player "' . $this->player . '" found.');
+        $notFound = $crawler->filterXPath('//*[@id="contentHiscores"]/div[contains(., \'No player\')]');
+
+        if ($notFound->count()) {
+            throw new PlayerNotFoundException($notFound->text());
         }
 
         if (!$element->count()) {

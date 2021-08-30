@@ -14,28 +14,38 @@ A PHP implementation to request player data in a nice format from:
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_woodcutting1.gif)
 ![](https://www.runescape.com/img/rsp777/hiscores/skill_icon_firemaking1.gif)
 
-## Installation instructions
+# Installation instructions
 `composer require bert-w/runescape-hiscores-api`
 
-### Code Samples
+## Code Samples
 
-#### Retrieving player data
+### Retrieving player data
+***Note**: It is important to define a user-agent as seen below, since the RuneScape website might throw errors
+if none is given.*
 ```php
 // OSRS
-$hiscores = new \BertW\RunescapeHiscoresApi\OSRSHiscores();
+$hiscores = new \BertW\RunescapeHiscoresApi\OSRSHiscores([
+    'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+    ],
+]);
 // RS3
-$hiscores = new \BertW\RunescapeHiscoresApi\RS3Hiscores();
+$hiscores = new \BertW\RunescapeHiscoresApi\RS3Hiscores([
+    'headers' => [
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36',
+    ],
+]);
 
 $player = $hiscores->player('someplayer');
 ```
 
-#### Get total level
+### Get total level
 ```php
 $totalLevel = $player->totalLevel();
 // Returns (int).
 ```
 
-#### Get all skills or minigames
+### Get all skills or minigames
 ```php
 $skills = $player->skills();
 
@@ -71,7 +81,7 @@ Array
 )
 ```
 
-#### Get a specific skill / minigame
+### Get a specific skill / minigame
 ```php
 // Case insensitive skill or minigame search. To be certain, use the
 // exact name as used on the OSRS Hiscores page.
@@ -93,7 +103,7 @@ All properties on this `HiscoreRow` object are:
 - `$player->get('agility')->score` (int|null)
   - Total score of the minigame (always `null` for skills).
 
-#### List of OSRS skills
+### List of OSRS skills
 ```php
 $player->get('Overall')->level;
 $player->get('Attack')->level;
@@ -121,7 +131,7 @@ $player->get('Hunter')->level;
 $player->get('Construction')->level;
 ```
 
-#### List of RS3 skills
+### List of RS3 skills
 ```php
 $player->get('Overall')->level;
 $player->get('Attack')->level;
