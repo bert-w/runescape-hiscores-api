@@ -4,7 +4,7 @@
     "keywords": ["runescape", "hiscores", "rs07", "osrs"],
     "license": "MIT",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.2|^8.0",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.3",
         "symfony/dom-crawler": "^5.0"
