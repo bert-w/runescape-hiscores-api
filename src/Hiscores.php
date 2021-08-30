@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class Hiscores
 {
-    const HISCORES_URL = null;
+    public const HISCORES_URL = null;
 
     /** @var Client */
     protected $client;
@@ -59,7 +59,7 @@ abstract class Hiscores
     protected function parseTextToNumber($value)
     {
         $value = trim($value);
-        if(empty($value) || $value === '--') {
+        if (empty($value) || $value === '--') {
             return null;
         }
 
@@ -74,8 +74,8 @@ abstract class Hiscores
     {
         return $this->client->get(static::HISCORES_URL, [
             'query' => [
-                'user1' => $player
-            ]
+                'user1' => $player,
+            ],
         ]);
     }
 

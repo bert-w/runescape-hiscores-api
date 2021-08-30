@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class RS3Hiscores extends Hiscores
 {
-    const HISCORES_URL = 'https://secure.runescape.com/m=hiscore/compare';
+    public const HISCORES_URL = 'https://secure.runescape.com/m=hiscore/compare';
 
     /** @var string */
     protected $playerType = RS3Player::class;
@@ -62,7 +62,7 @@ class RS3Hiscores extends Hiscores
         $rows = [];
 
         // Loop table data and create a Player object.
-        foreach($data as $row) {
+        foreach ($data as $row) {
             $rows[] = $this->parseSkill($row);
         }
 
@@ -95,12 +95,12 @@ class RS3Hiscores extends Hiscores
 
         $element = $crawler->filterXPath('//*[@class="playerStats"][1]//table');
 
-        if(!$element->count()) {
+        if (!$element->count()) {
             throw new HiscoresException('Unexpected response received. Could not find the hiscores table.');
         }
 
-        return $element->filterXPath('//tr')->each(function(Crawler $tr, $i) {
-            return array_merge([$this->findSkillId($tr)], $tr->filterXPath('//td')->each(function(Crawler $td, $i) {
+        return $element->filterXPath('//tr')->each(function (Crawler $tr, $i) {
+            return array_merge([$this->findSkillId($tr)], $tr->filterXPath('//td')->each(function (Crawler $td, $i) {
                 return $td->text();
             }));
         });
@@ -115,11 +115,10 @@ class RS3Hiscores extends Hiscores
     protected function findSkillId(Crawler $obj)
     {
         $a = $obj->filterXPath('//a');
-        if($a->count()) {
+        if ($a->count()) {
             parse_str(parse_url($a->link()->getUri(), PHP_URL_QUERY), $query);
 
             return isset($query['table']) ? (int)$query['table'] : null;
-
         }
         return null;
     }

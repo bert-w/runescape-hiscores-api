@@ -19,7 +19,7 @@ $player = (new OSRSHiscores([
 <p>Combat level: <?php echo $player->combatLevel() ?> <?php echo $player->incompleteCombatLevel() ? '(estimate)' : '' ?></p>
 
 <table>
-    <?php foreach($player->skills() as $skill): ?>
+    <?php foreach ($player->skills() as $skill): ?>
         <tr>
             <td><img src="<?php echo $skill->icon ?>" alt="<?php echo $skill->name ?>"/></td>
             <td><?php echo $skill->name ?></td>
@@ -33,7 +33,7 @@ $player = (new OSRSHiscores([
             <hr/>
         </td>
     </tr>
-    <?php foreach($player->minigames() as $skill): ?>
+    <?php foreach ($player->minigames() as $skill): ?>
         <tr>
             <td><img src="<?php echo $skill->icon ?>" alt="<?php echo $skill->name ?>"/></td>
             <td><?php echo $skill->name ?></td>

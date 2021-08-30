@@ -4,8 +4,8 @@ namespace BertW\RunescapeHiscoresApi;
 
 class HiscoreRow
 {
-    const SKILL = 'skill';
-    const MINIGAME = 'minigame';
+    public const SKILL = 'skill';
+    public const MINIGAME = 'minigame';
 
     /**
      * URL to the skill icon that is prepended to each skill in the hiscores table.
@@ -55,7 +55,7 @@ class HiscoreRow
      */
     public function __construct(array $properties = [])
     {
-        foreach($properties as $property => $value) {
+        foreach ($properties as $property => $value) {
             $this->$property = $value;
         }
     }

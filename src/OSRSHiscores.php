@@ -9,7 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class OSRSHiscores extends Hiscores
 {
-    const HISCORES_URL = 'https://secure.runescape.com/m=hiscore_oldschool/c=1/hiscorepersonal';
+    public const HISCORES_URL = 'https://secure.runescape.com/m=hiscore_oldschool/c=1/hiscorepersonal';
 
     /** @var string */
     protected $playerType = OSRSPlayer::class;
@@ -28,8 +28,8 @@ class OSRSHiscores extends Hiscores
         $type = HiscoreRow::SKILL;
 
         // Loop table data and create a Player object.
-        foreach($data as $row) {
-            if(empty($row)) {
+        foreach ($data as $row) {
+            if (empty($row)) {
                 // Conveniently, there's an empty table row that indicates we reached the bottom section,
                 // which lists the minigame hiscores.
                 $type = HiscoreRow::MINIGAME;
@@ -53,7 +53,7 @@ class OSRSHiscores extends Hiscores
             'rank' => $this->parseTextToNumber($row[2]),
             'level' => $this->parseTextToNumber($row[3]),
             'experience' => $this->parseTextToNumber($row[4]),
-            'type' => HiscoreRow::SKILL
+            'type' => HiscoreRow::SKILL,
         ]);
     }
 
@@ -68,7 +68,7 @@ class OSRSHiscores extends Hiscores
             'name' => $row[1],
             'rank' => $this->parseTextToNumber($row[2]),
             'score' => $this->parseTextToNumber($row[3]),
-            'type' => HiscoreRow::MINIGAME
+            'type' => HiscoreRow::MINIGAME,
         ]);
     }
 
@@ -82,18 +82,18 @@ class OSRSHiscores extends Hiscores
         $crawler = new Crawler((string)$response->getBody());
         $element = $crawler->filterXPath('//*[@id="contentHiscores"]//table');
 
-        if($crawler->filterXPath('//*[@id="contentHiscores"]/div[contains(., \'No player\')]')->count()) {
+        if ($crawler->filterXPath('//*[@id="contentHiscores"]/div[contains(., \'No player\')]')->count()) {
             throw new PlayerNotFoundException('No player "' . $this->player . '" found.');
         }
 
-        if(!$element->count()) {
+        if (!$element->count()) {
             throw new HiscoresException('Unexpected response received. Could not find the hiscores table.');
         }
 
-        return $element->filterXPath('//tr')->each(function(Crawler $tr, $i) {
-            return $tr->filterXPath('//td')->each(function(Crawler $td, $i) {
+        return $element->filterXPath('//tr')->each(function (Crawler $tr, $i) {
+            return $tr->filterXPath('//td')->each(function (Crawler $td, $i) {
                 $img = $td->filterXPath('//img');
-                if($img->count()) {
+                if ($img->count()) {
                     return $img->attr('src');
                 }
                 return $td->text();

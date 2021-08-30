@@ -20,7 +20,7 @@ $player = (new RS3Hiscores([
 <p>Combat level: <?php echo $player->combatLevel() ?> <?php echo $player->incompleteCombatLevel() ? '(estimate)' : '' ?></p>
 
 <table>
-    <?php foreach($player->skills() as $skill): ?>
+    <?php foreach ($player->skills() as $skill): ?>
         <tr>
             <td><img src="<?php echo $skill->icon ?>" alt="<?php echo $skill->name ?>"/></td>
             <td><?php echo $skill->name ?></td>

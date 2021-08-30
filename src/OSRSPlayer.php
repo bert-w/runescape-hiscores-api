@@ -4,7 +4,7 @@ namespace BertW\RunescapeHiscoresApi;
 
 class OSRSPlayer extends Player
 {
-    CONST COMBAT_SKILLS = ['attack', 'strength', 'defence', 'hitpoints', 'ranged', 'prayer', 'magic'];
+    public const COMBAT_SKILLS = ['attack', 'strength', 'defence', 'hitpoints', 'ranged', 'prayer', 'magic'];
 
     /**
      * Calculate the player's combat level.

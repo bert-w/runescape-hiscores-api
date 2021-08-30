@@ -4,7 +4,7 @@ namespace BertW\RunescapeHiscoresApi;
 
 abstract class Player
 {
-    const COMBAT_SKILLS = [];
+    public const COMBAT_SKILLS = [];
     /** @var string */
     protected $username;
     /** @var HiscoreRow[] */
@@ -32,12 +32,12 @@ abstract class Player
 
         $this->hiscores = $hiscores;
 
-        if(is_null($this->get('overall')->level)) {
+        if (is_null($this->get('overall')->level)) {
             $this->noTotalLevelFound = true;
         }
 
-        foreach(static::COMBAT_SKILLS as $skill) {
-            if(is_null($this->get($skill)->level)) {
+        foreach (static::COMBAT_SKILLS as $skill) {
+            if (is_null($this->get($skill)->level)) {
                 $this->incompleteCombatLevel = true;
                 break;
             }
@@ -53,8 +53,8 @@ abstract class Player
     public function get($name)
     {
         $name = strtolower($name);
-        foreach($this->hiscores as $hiscore) {
-            if(strtolower($hiscore->name) === $name) {
+        foreach ($this->hiscores as $hiscore) {
+            if (strtolower($hiscore->name) === $name) {
                 return $hiscore;
             }
         }
@@ -96,7 +96,7 @@ abstract class Player
      */
     public function minigames()
     {
-        return array_filter($this->hiscores, function(HiscoreRow $hiscore) {
+        return array_filter($this->hiscores, function (HiscoreRow $hiscore) {
             return $hiscore->type === HiscoreRow::MINIGAME;
         });
     }
@@ -107,9 +107,9 @@ abstract class Player
      */
     public function totalLevel()
     {
-        if($this->noTotalLevelFound) {
+        if ($this->noTotalLevelFound) {
             $sum = 0;
-            foreach($this->skills() as $skill) {
+            foreach ($this->skills() as $skill) {
                 $sum += $skill->level;
             }
             return $sum;
@@ -122,7 +122,7 @@ abstract class Player
      */
     public function skills()
     {
-        return array_filter($this->hiscores, function(HiscoreRow $hiscore) {
+        return array_filter($this->hiscores, function (HiscoreRow $hiscore) {
             return $hiscore->type === HiscoreRow::SKILL;
         });
     }
@@ -135,10 +135,10 @@ abstract class Player
     public function toArray()
     {
         return [
-            'hiscores' => array_map(function(HiscoreRow $hiscore) {
+            'hiscores' => array_map(function (HiscoreRow $hiscore) {
                 return $hiscore->toArray();
             }, $this->hiscores),
-            'noTotalLevelFound' => $this->noTotalLevelFound
+            'noTotalLevelFound' => $this->noTotalLevelFound,
         ];
     }
 }
