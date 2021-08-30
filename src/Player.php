@@ -2,37 +2,38 @@
 
 namespace BertW\RunescapeHiscoresApi;
 
-class Player
+abstract class Player
 {
+    const COMBAT_SKILLS = [];
+    /** @var string */
+    protected $username;
     /** @var HiscoreRow[] */
     protected $hiscores;
-
     /**
-     * This indicates whether an explicit total level is defined or not.
+     * This indicates whether an explicit total level was found on the hiscores or not.
      * If this value is true (no total level), the `totalLevel()` function calculates a minimum from the skills.
      * @var bool
      */
-    public $noTotalLevel;
-
+    protected $noTotalLevelFound;
     /**
      * When this property is true, the combat level couldn't be completely calculated, because
      * one or more of the combat skills were not in the hiscores. For those values, `1` is used,
      * resulting in a possibly lower combat level than is the case.
      * @var bool
      */
-    public $incompleteCombatLevel;
-
-    CONST COMBAT_SKILLS = ['attack', 'strength', 'defence', 'hitpoints', 'ranged', 'prayer', 'magic'];
+    protected $incompleteCombatLevel;
 
     /**
      * @param HiscoreRow[] $hiscores
      */
-    public function __construct($hiscores = [])
+    public function __construct($username, $hiscores = [])
     {
+        $this->username = $username;
+
         $this->hiscores = $hiscores;
 
         if(is_null($this->get('overall')->level)) {
-            $this->noTotalLevel = true;
+            $this->noTotalLevelFound = true;
         }
 
         foreach(static::COMBAT_SKILLS as $skill) {
@@ -61,13 +62,33 @@ class Player
     }
 
     /**
-     * @return HiscoreRow[]
+     * Calculate the player's combat level.
+     * @return float
      */
-    public function skills()
+    abstract public function combatLevel();
+
+    /**
+     * @return string
+     */
+    public function username()
     {
-        return array_filter($this->hiscores, function(HiscoreRow $hiscore) {
-            return $hiscore->type === HiscoreRow::SKILL;
-        });
+        return $this->username;
+    }
+
+    /**
+     * @return bool
+     */
+    public function noTotalLevelFound()
+    {
+        return $this->noTotalLevelFound;
+    }
+
+    /**
+     * @return bool
+     */
+    public function incompleteCombatLevel()
+    {
+        return $this->incompleteCombatLevel;
     }
 
     /**
@@ -86,7 +107,7 @@ class Player
      */
     public function totalLevel()
     {
-        if($this->noTotalLevel) {
+        if($this->noTotalLevelFound) {
             $sum = 0;
             foreach($this->skills() as $skill) {
                 $sum += $skill->level;
@@ -97,24 +118,13 @@ class Player
     }
 
     /**
-     * Calculate the player's combat level.
-     * @return float
+     * @return HiscoreRow[]
      */
-    public function combatLevel()
+    public function skills()
     {
-        // Retrieve all combat skills, using `1` where they are undefined.
-        $attack = $this->get('attack')->level ?: 1;
-        $strength = $this->get('strength')->level ?: 1;
-        $defence = $this->get('defence')->level ?: 1;
-        $hitpoints = $this->get('hitpoints')->level ?: 10;
-        $ranged = $this->get('ranged')->level ?: 1;
-        $prayer = $this->get('prayer')->level ?: 1;
-        $magic = $this->get('magic')->level ?: 1;
-
-        $calculation = 13 / 10 * max($attack + $strength, 2 * $magic, 2 * $ranged)
-            + $defence + $hitpoints + floor(0.5 * $prayer);
-
-        return $calculation / 4;
+        return array_filter($this->hiscores, function(HiscoreRow $hiscore) {
+            return $hiscore->type === HiscoreRow::SKILL;
+        });
     }
 
     public function __toString()
@@ -128,7 +138,7 @@ class Player
             'hiscores' => array_map(function(HiscoreRow $hiscore) {
                 return $hiscore->toArray();
             }, $this->hiscores),
-            'noTotalLevel' => $this->noTotalLevel
+            'noTotalLevelFound' => $this->noTotalLevelFound
         ];
     }
 }

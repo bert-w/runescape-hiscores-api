@@ -14,5 +14,13 @@
             "BertW\\RunescapeHiscoresApi\\": "src/"
         }
     },
-    "minimum-stability": "stable"
+    "autoload-dev": {
+        "psr-4": {
+            "BertW\\RunescapeHiscoresApi\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
 }
