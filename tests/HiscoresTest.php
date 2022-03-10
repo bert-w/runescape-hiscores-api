@@ -2,18 +2,17 @@
 
 namespace BertW\RunescapeHiscoresApi\Tests;
 
-use BertW\RunescapeHiscoresApi\OSRSHiscores;
-use BertW\RunescapeHiscoresApi\RS3Hiscores;
+use BertW\RunescapeHiscoresApi\Hiscores;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
-class HiscoresTest extends TestCase
+abstract class HiscoresTest extends TestCase
 {
     /**
      * Create a Hiscores class where the html response is predetermined by a given html file.
      * @param string $classname
      * @param string $filename html file from the tests/mocks directory
-     * @return OSRSHiscores
+     * @return Hiscores
      */
     protected function getHiscoresWithMockedResponse($classname, $filename)
     {
