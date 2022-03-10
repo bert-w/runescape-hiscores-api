@@ -11,14 +11,11 @@ class OSRSHiscores extends Hiscores
 {
     public const HISCORES_URL = 'https://secure.runescape.com/m=hiscore_oldschool/c=1/hiscorepersonal';
 
-    /** @var string */
-    protected $playerType = OSRSPlayer::class;
-
     /**
      * In the hiscores html, every row in the table is associated with a skill, which has an associated ID.
      * @var string[]
      */
-    protected $skillMap = [
+    public const SKILL_MAP = [
         0 => 'Overall',
         1 => 'Attack',
         2 => 'Defence',
@@ -45,6 +42,9 @@ class OSRSHiscores extends Hiscores
         23 => 'Construction',
     ];
 
+    /** @var string */
+    protected $playerType = OSRSPlayer::class;
+
     /**
      * Parse table data into skills and minigames.
      * @param array $data
@@ -55,7 +55,10 @@ class OSRSHiscores extends Hiscores
         // Strip first 3 rows from the table.
         $data = array_slice($data, 3);
 
-        $rows = [];
+        $skills = [];
+
+        $minigames = [];
+
         $type = HiscoreRow::SKILL;
 
         // Loop table data and create a Player object.
@@ -66,10 +69,14 @@ class OSRSHiscores extends Hiscores
                 $type = HiscoreRow::MINIGAME;
                 continue;
             }
-            $rows[] = $type === HiscoreRow::SKILL ? $this->parseSkill($row) : $this->parseMinigame($row);
+            if($type === HiscoreRow::SKILL) {
+                $skills[] = $this->parseSkill($row);
+            } else {
+                $minigames[] = $this->parseMinigame($row);
+            }
         }
 
-        return $rows;
+        return compact('skills', 'minigames');
     }
 
     /**

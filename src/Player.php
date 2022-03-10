@@ -5,16 +5,23 @@ namespace BertW\RunescapeHiscoresApi;
 abstract class Player
 {
     public const COMBAT_SKILLS = [];
+
     /** @var string */
     protected $username;
+
     /** @var HiscoreRow[] */
-    protected $hiscores;
+    protected $skills;
+
+    /** @var HiscoreRow[] */
+    protected $minigames;
+
     /**
      * This indicates whether an explicit total level was found on the hiscores or not.
      * If this value is true (no total level), the `totalLevel()` function calculates a minimum from the skills.
      * @var bool
      */
     protected $noTotalLevelFound;
+
     /**
      * When this property is true, the combat level couldn't be completely calculated, because
      * one or more of the combat skills were not in the hiscores. For those values, `1` is used,
@@ -24,13 +31,17 @@ abstract class Player
     protected $incompleteCombatLevel;
 
     /**
-     * @param HiscoreRow[] $hiscores
+     * @param string $username
+     * @param HiscoreRow[] $skills
+     * @param HiscoreRow[] $minigames
      */
-    public function __construct($username, $hiscores = [])
+    public function __construct($username, $skills = [], $minigames = [])
     {
         $this->username = $username;
 
-        $this->hiscores = $hiscores;
+        $this->skills = $skills;
+
+        $this->minigames = $minigames;
 
         if (is_null($this->get('overall')->level)) {
             $this->noTotalLevelFound = true;
@@ -53,7 +64,7 @@ abstract class Player
     public function get($name)
     {
         $name = strtolower($name);
-        foreach ($this->hiscores as $hiscore) {
+        foreach ($this->hiscores() as $hiscore) {
             if (strtolower($hiscore->name) === $name) {
                 return $hiscore;
             }
@@ -92,25 +103,21 @@ abstract class Player
     }
 
     /**
-     * @return HiscoreRow[]
-     */
-    public function minigames()
-    {
-        return array_filter($this->hiscores, function (HiscoreRow $hiscore) {
-            return $hiscore->type === HiscoreRow::MINIGAME;
-        });
-    }
-
-    /**
      * Retrieve this player's total level, or the sum of the users' hiscores if there isn't any.
+     * Note that this total level can sometimes be an estimation (a minimum), and uses level=1 for skills that could
+     * not be found in the hiscores.
      * @return int
      */
     public function totalLevel()
     {
         if ($this->noTotalLevelFound) {
             $sum = 0;
-            foreach ($this->skills() as $skill) {
-                $sum += $skill->level;
+            foreach($this instanceof OSRSPlayer ? OSRSHiscores::SKILL_MAP : RS3Hiscores::SKILL_MAP as $skill) {
+                if ($skill === 'Overall') {
+                    // 'Overall' is a cumulative so we skip it for the sum.
+                    continue;
+                }
+                $sum += $this->get($skill)->level ?: 1;
             }
             return $sum;
         }
@@ -120,24 +127,44 @@ abstract class Player
     /**
      * @return HiscoreRow[]
      */
+    public function minigames()
+    {
+        return $this->minigames;
+    }
+
+    /**
+     * @return HiscoreRow[]
+     */
     public function skills()
     {
-        return array_filter($this->hiscores, function (HiscoreRow $hiscore) {
-            return $hiscore->type === HiscoreRow::SKILL;
-        });
+        return $this->skills;
     }
 
+    /**
+     * @return HiscoreRow[]
+     */
+    public function hiscores()
+    {
+        return array_merge($this->skills, $this->minigames);
+    }
+
+    /**
+     * @return false|string
+     */
     public function __toString()
     {
-        return json_encode($this->hiscores);
+        return json_encode($this->hiscores());
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
             'hiscores' => array_map(function (HiscoreRow $hiscore) {
                 return $hiscore->toArray();
-            }, $this->hiscores),
+            }, $this->hiscores()),
             'noTotalLevelFound' => $this->noTotalLevelFound,
         ];
     }

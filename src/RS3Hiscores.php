@@ -10,14 +10,11 @@ class RS3Hiscores extends Hiscores
 {
     public const HISCORES_URL = 'https://secure.runescape.com/m=hiscore/compare';
 
-    /** @var string */
-    protected $playerType = RS3Player::class;
-
     /**
      * In the hiscores html, every row in the table is associated with a skill, which has an associated ID.
      * @var string[]
      */
-    protected $skillMap = [
+    public const SKILL_MAP = [
         0 => 'Overall',
         1 => 'Attack',
         2 => 'Defence',
@@ -49,6 +46,10 @@ class RS3Hiscores extends Hiscores
         28 => 'Archaeology',
     ];
 
+    /** @var string */
+    protected $playerType = RS3Player::class;
+
+
     /**
      * Parse table data into skills.
      * @param array $data
@@ -66,7 +67,8 @@ class RS3Hiscores extends Hiscores
             $rows[] = $this->parseSkill($row);
         }
 
-        return $rows;
+        // Minigames are always empty in the RS3 hiscores page.
+        return ['skills' => $rows, 'minigames' => []];
     }
 
     /**
@@ -76,7 +78,7 @@ class RS3Hiscores extends Hiscores
     protected function parseSkill(array $row)
     {
         return new HiscoreRow([
-            'name' => $this->skillMap[$row[0]] ?? null,
+            'name' => static::SKILL_MAP[$row[0]] ?? null,
             'rank' => $this->parseTextToNumber($row[1]),
             'experience' => $this->parseTextToNumber($row[2]),
             'level' => $this->parseTextToNumber($row[3]),
