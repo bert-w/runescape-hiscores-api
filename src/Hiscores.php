@@ -10,14 +10,13 @@ abstract class Hiscores
 {
     public const HISCORES_URL = null;
 
+    public const SKILL_MAP = [];
+
     /** @var Client */
     protected $client;
 
     /** @var string */
     protected $playerType;
-
-    /** @var array */
-    protected $skillMap;
 
     /**
      * @param mixed ...$arguments Pass arguments straight to the Guzzle Client, allowing you to set a
@@ -38,10 +37,11 @@ abstract class Hiscores
     public function player($player)
     {
         // Retrieve and parse Hiscores HTML table for this user.
-        $rows = $this->parseTableData($this->getTableData($player));
+        extract($this->parseTableData($this->getTableData($player)));
 
         $class = $this->playerType;
-        return new $class($player, $rows);
+
+        return new $class($player, $skills, $minigames);
     }
 
     /**
@@ -56,11 +56,12 @@ abstract class Hiscores
     }
 
     /**
+     * @deprecated Use the constant.
      * @return array
      */
     public function skillMap()
     {
-        return $this->skillMap;
+        return static::SKILL_MAP;
     }
 
     /**

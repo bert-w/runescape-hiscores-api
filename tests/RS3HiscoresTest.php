@@ -2,23 +2,15 @@
 
 namespace BertW\RunescapeHiscoresApi\Tests;
 
-use BertW\RunescapeHiscoresApi\OSRSHiscores;
 use BertW\RunescapeHiscoresApi\RS3Hiscores;
-use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
 
-class RS3HiscoresTest extends TestCase
+class RS3HiscoresTest extends HiscoresTest
 {
     public function testTopPlayer()
     {
         $username = 'le me';
 
-        $hiscores = \Mockery::mock(RS3Hiscores::class);
-
-        $hiscores->shouldAllowMockingProtectedMethods()
-            ->makePartial()
-            ->shouldReceive('request')
-            ->andReturn(new Response(200, [], file_get_contents(__DIR__ . '/mocks/hiscores_rs3_le_me.html')));
+        $hiscores = $this->getHiscoresWithMockedResponse(RS3Hiscores::class, 'hiscores_rs3_max_skills.html');
 
         $player = $hiscores->player($username);
 
@@ -28,8 +20,8 @@ class RS3HiscoresTest extends TestCase
 
         $skill120 = ['Herblore', 'Slayer', 'Farming', 'Dungeoneering', 'Invention', 'Archaeology'];
 
-        foreach($hiscores->skillMap() as $i => $skill) {
-            if ($skill === 'Overall') {
+        foreach($hiscores::SKILL_MAP as $i => $skill) {
+            if($skill === 'Overall') {
                 // Overall is a cumulative and not a skill.
                 continue;
             }
