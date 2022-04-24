@@ -1,5 +1,9 @@
 # Release Notes
 
+## [v3.1.0](https://github.com/bert-w/runescape-hiscores-api/compare/v3.0.0...v3.1.0) - 2022-04-24
+
+- Added Guzzle 7 optional upgrade
+
 ## [v3.0.0](https://github.com/bert-w/runescape-hiscores-api/compare/v2.0.0...v3.0.0) - 2022-03-10
 
 ### Changed
