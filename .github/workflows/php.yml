@@ -1,34 +1,38 @@
 name: PHP Pipeline
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     strategy:
+      fail-fast: true
       matrix:
-        php-versions: ['7.3', '7.4', '8.0']
+        php: [8.3, 8.2, 8.1, 7.4, 7.3]
 
-    name: PHP ${{ matrix.php-versions }}
+    name: PHP ${{ matrix.php }}
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, pcntl, pdo, sqlite, pdo_sqlite, bcmath, gd, exif, iconv, fileinfo
+          coverage: none
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v4
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-      
-    - name: Run test suite
-      run: composer run-script test
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+      - name: Run test suite
+        run: composer run-script test
